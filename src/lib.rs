@@ -1061,7 +1061,7 @@ impl<T: Activated + ?Sized> Capture<T> {
     /// packets will be discarded temporarily. This means that in realtime situations,
     /// you probably want to minimize the time between calls of this next() method.
     #[allow(clippy::should_implement_trait)]
-    pub fn next(&mut self) -> Result<Packet, Error> {
+    pub fn next(&self) -> Result<Packet, Error> {
         unsafe {
             let mut header: *mut raw::pcap_pkthdr = ptr::null_mut();
             let mut packet: *const libc::c_uchar = ptr::null();
@@ -1178,7 +1178,7 @@ impl<T: Activated + ?Sized> Capture<T> {
 
 impl Capture<Active> {
     /// Sends a packet over this capture handle's interface.
-    pub fn sendpacket<B: Borrow<[u8]>>(&mut self, buf: B) -> Result<(), Error> {
+    pub fn sendpacket<B: Borrow<[u8]>>(&self, buf: B) -> Result<(), Error> {
         let buf = buf.borrow();
         self.check_err(unsafe {
             raw::pcap_sendpacket(*self.handle, buf.as_ptr() as _, buf.len() as _) == 0
